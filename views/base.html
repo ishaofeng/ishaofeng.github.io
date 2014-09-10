@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <base href="http://www.smalllv.cn" >
+    <base href="http://[[domain]]" >
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="keywords" content="Linux,Python,Vim,Hadoop,Redis,大数据,跑步" />
-    <meta name="description" content="小毛驴CodingWorld, 记录一个Coder的成长" />
+    <meta name="keywords" content="[[keywords]]" />
+    <meta name="description" content="[[description]]" />
       
-    <title> 小毛驴|Coding World </title>
+    <title>[% block title %] [[title]] [% endblock %]</title>
     <link rel="shortcut icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -22,7 +22,7 @@
     <link href="css/style.css" rel="stylesheet">
     <link rel="shortcut icon" href="img/favicon.ico">
      
-	<link rel="alternate" type="application/rss+xml" title="RSS" href="http://www.smalllv.cn/rss.xml">
+	<link rel="alternate" type="application/rss+xml" title="RSS" href="http://[[domain]]/rss.xml">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
     <!--[if lt IE 9]>
@@ -52,15 +52,9 @@
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">分类<b class="caret"></b></a>
               <ul class="dropdown-menu">
-                
-                    <li><a href="/tags/python.html">python</a></li>
-                
-                    <li><a href="/tags/ 工具.html"> 工具</a></li>
-                
-                    <li><a href="/tags/网络知识.html">网络知识</a></li>
-                
-                    <li><a href="/tags/生活杂记.html">生活杂记</a></li>
-                
+                [% for tag in tags %]
+                    <li><a href="[[tag.url]]">[[tag.title]]</a></li>
+                [% endfor %]
               </ul>
             </li>
             <li><a href="/about.html">关于我</a></li>
@@ -79,38 +73,8 @@
       </nav>
 
     <div class="container">
-             
-<div id="sidebar">
-    <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=1&ptype=0&speed=0&skin=10&isTitle=0&noborder=1&isWeibo=0&isFans=0&uid=1714550751&verifier=7dc72b55&colors=34495e,34495e,22b14c,0082cb,ecfbfd&dpc=1"></iframe>
-</div>
-<div id="main">
-    
-        <div class="post">
-            <i class="icon-bookmark"></i>
-            <a href="/posts/zuo-ge-an-jing-de-coder.html">做个安静的Coder</a>
-            <span class="pull-right">2014-08-07</span>
-        </div>
-    
-        <div class="post">
-            <i class="icon-bookmark"></i>
-            <a href="/posts/shi-yong-python-xia-zai-duo-kan-dian-zi-shu.html">使用Python下载多看电子书</a>
-            <span class="pull-right">2014-08-02</span>
-        </div>
-    
-        <div class="post">
-            <i class="icon-bookmark"></i>
-            <a href="/posts/http-xue-xi-ji-lu.html">HTTP学习记录</a>
-            <span class="pull-right">2014-07-20</span>
-        </div>
-    
-        <div class="post">
-            <i class="icon-bookmark"></i>
-            <a href="/posts/wei-wei-lai-zhun-bei.html">为未来做准备</a>
-            <span class="pull-right">2014-07-13</span>
-        </div>
-    
-</div>
-
+             [% block content %]
+             [% endblock %]
     </div>
       
     <script type="text/javascript">

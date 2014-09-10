@@ -7,7 +7,9 @@
     <meta name="keywords" content="Linux,Python,Vim,Hadoop,Redis,大数据,跑步" />
     <meta name="description" content="小毛驴CodingWorld, 记录一个Coder的成长" />
       
-    <title> 小毛驴|Coding World </title>
+    <title>
+使用Python下载多看电子书--小毛驴
+</title>
     <link rel="shortcut icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -80,36 +82,67 @@
 
     <div class="container">
              
-<div id="sidebar">
-    <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=1&ptype=0&speed=0&skin=10&isTitle=0&noborder=1&isWeibo=0&isFans=0&uid=1714550751&verifier=7dc72b55&colors=34495e,34495e,22b14c,0082cb,ecfbfd&dpc=1"></iframe>
-</div>
-<div id="main">
-    
-        <div class="post">
-            <i class="icon-bookmark"></i>
-            <a href="/posts/zuo-ge-an-jing-de-coder.html">做个安静的Coder</a>
-            <span class="pull-right">2014-08-07</span>
-        </div>
-    
-        <div class="post">
-            <i class="icon-bookmark"></i>
-            <a href="/posts/shi-yong-python-xia-zai-duo-kan-dian-zi-shu.html">使用Python下载多看电子书</a>
-            <span class="pull-right">2014-08-02</span>
-        </div>
-    
-        <div class="post">
-            <i class="icon-bookmark"></i>
-            <a href="/posts/http-xue-xi-ji-lu.html">HTTP学习记录</a>
-            <span class="pull-right">2014-07-20</span>
-        </div>
-    
-        <div class="post">
-            <i class="icon-bookmark"></i>
-            <a href="/posts/wei-wei-lai-zhun-bei.html">为未来做准备</a>
-            <span class="pull-right">2014-07-13</span>
-        </div>
-    
-</div>
+
+<h2>使用Python下载多看电子书</h2>
+<hr />
+<p>这两天<strong>多看</strong>(ps:必须说现在多看做的越来越Kindle了)电子书免费看三天，昨天看到微博有人提取了文字，有人说不能保存格式，那么问什么不直接截图呢，
+所以就写了写，下载了四本书，么有体力继续了哈哈， 之前用过<code>selenium</code>东东，用的时候发现Chrome上还是不
+太稳定,不折腾这个了。</p>
+<p>使用它<code>python duokan.py 图书网页id  书名  起始页码</code>当浏览器打开后,调整合适的尺寸，然后任意输入就
+可以开始啦，速度稍微有那么一点点慢，但是下载还是妥妥的，我和小伙伴都这么搞了，中间可能会弹出活动
+提示，在打开图书的时候直接往后拖拽,这个只弹出一次，然后再拖拽回去就不会再出现了.</p>
+<pre><code>#! /usr/bin/python
+#coding=utf-8
+
+from selenium import webdriver
+import time
+
+import sys
+
+import os
+
+url=sys.argv[1]
+name=sys.argv[2]
+start=int(sys.argv[3])
+
+if os.path.exists(name) == False:
+    os.mkdir(name)
+
+browser = webdriver.Chrome()
+browser.set_window_size(600, 800)
+browser.get(url)
+
+wait = raw_input("请重置尺寸后开始&gt;&gt;")
+
+pageCount = browser.execute_script("return $('.j-md-footer .left').html().split('/')[1]; ")
+pageCount = int(pageCount)
+time.sleep(2)
+for i in xrange(start, pageCount):
+    print "保存页面 ", i
+    browser.execute_script("$('.j-pagedown').click()")
+    c = 6
+    time.sleep(2)
+
+    browser.execute_script("var btn = $('.u-layer #activity_tip_dialog').parent().css('display') == 'none'; if (btn) { \
+                $('.u-btn.j-close').click()}")
+
+    print browser.save_screenshot("./%s/%s_%05d" % (name, name, i))
+</code></pre>
+<!-- Duoshuo Comment BEGIN -->
+	<div class="ds-thread"></div>
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"smalllv"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- Duoshuo Comment END -->
+
 
     </div>
       

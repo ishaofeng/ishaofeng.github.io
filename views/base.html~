@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="keywords" content="[[keywords]]" />
+    <meta name="description" content="[[description]]" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    <title>[[title]]</title>
+    <link rel="stylesheet" type="text/css" href="/styles/style.css">
+    <link rel="Stylesheet" type="text/css" href="/js/prettify/desert.css" />
+    <link rel="stylesheet" type="text/css" href="/styles/bootstrap-jian.css">
+    <script type="text/javascript"  src="/js/prettify/prettify.js"></script>
+	<link rel="alternate" type="application/rss+xml" title="RSS" href="http://[[domain]]/rss.xml">
+</head>
+<body>
+		<div id="logo">
+			<h1><a href="/index.html" >[[fulltitle]]</a>
+                <form onsubmit="return dispatch()" style="display:inline">
+                    <span style="width: 210px; height: 26px; margin-left:24px; background-size: 210px 26px; background-image: url('/image/qbar_light@2x.png'); background-repeat: no-repeat; display: inline-block;">
+                        <input type="text" maxlength="40" name="q" id="q" value="">
+                    </span>
+                </form>
+            </h1>
+            
+        </div>
+<div id="wrapper">
+<div id="content" class="index">
+     [% block content %]
+     [% endblock %]
+</div>
+<div id="footer">
+	<span style="color:#bbb;font-size:12px">
+	&copy; Powered by <a href="https://github.com/daimin/daimin.github.com" title="sologs">sologs</a> | Themed by <a href="http://blog.leezhong.com/" title="Limboy">Limboy</a>
+	</span>
+	<p style="clear:both"></p>
+</div>
+</div>
+<script type="text/javascript">
+function hasClass(obj, cls) {  
+    return obj.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));  
+}
+function addClass(obj, cls) {  
+    if (!this.hasClass(obj, cls)) obj.className += " " + cls;  
+} 
+
+function render_pretty(){
+    var pres = document.getElementsByTagName("pre");
+    for(var i = 0, len = pres.length; i < len; i++){
+        addClass(pres[i], "prettyprint linenums");
+    }
+    prettyPrint();
+
+}
+
+window.onload = function(){
+   render_pretty();
+};
+
+var dispatch = function() {
+    q = document.getElementById("q");
+    if (q.value != "") {
+        //"http://www.baidu.com/s?si=www.williamlong.info&cl=3&ct=2097152&tn=baidulocal&word="+wd
+        window.open('http://www.baidu.com/s?si=${domain}&cl=3&ct=2097152&tn=bds&word=' + q.value, "_blank");
+        return false;
+    } else {
+        return false;
+    }
+};
+
+</script>
+<script type="text/javascript" src="/js/jimdoclockzip.js"></script>
+<script type="text/javascript">
+var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_5814730'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/stat.php%3Fid%3D5814730%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+</script>
+</body>
+</html>

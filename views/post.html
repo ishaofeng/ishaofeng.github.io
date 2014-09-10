@@ -1,0 +1,12 @@
+[% extends "base.html" %]
+
+[% block title %]
+[[ post.title ]]--小毛驴
+[% endblock %]
+[% block content %]
+
+[[post.content]]
+[% include "comment.html" %]
+
+[% endblock %]
+
