@@ -151,6 +151,7 @@ if __name__ == "__main__":
            tagposts.append(posts[postindex])
 
        conf["posts"] = tagposts
+       conf["tag"] = tag
        tagHtml = view("index.html", conf)
        with open(".%s" % tag["url"], "w") as f:
            f.write(tagHtml)
