@@ -8,7 +8,7 @@
     <meta name="description" content="小毛驴CodingWorld, 记录一个Coder的成长" />
     <meta name="baidu-site-verification" content="OqbZT1T9J5" />
     <title>
-做个安静的Coder--小毛驴
+Redis源码阅读--小毛驴
 </title>
     <link rel="shortcut icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -87,22 +87,45 @@
     <div class="container">
              
 
-<h2>做个安静的Coder</h2>
+<h2>Redis源码阅读</h2>
 <hr />
-<h3>回归</h3>
-<p>终于回到西安了，在学校有了一点点学生的感觉，这两天在阅读Redis源代码,安安静静的学习学习,项目的事情已经不想再去想了，老板性情变化无常
-实在没有办法，也不去计较这么写东东.早一点毕业或许是最好的解决办法。性格多么直爽不见得是什么好事情，内敛才是处世的王道，尤其和性格变
-化无常的人，哎呀我还是安静的做个Coder,思考这么些处世的事情还是太累。</p>
-<h3>头发</h3>
-<p>昨天姐姐来家里说感觉我的头发越来越稀疏了，实在点在了我的痛楚，当时做SYSJ太耗体力和脑力，当初可能太傻了，到现在这个境地没有人关注你的
-过去的付出，老板或者甲方都看的是眼前的利益，就像我那永远也考不了的科目二。</p>
-<h3>学习</h3>
-<p>最近在阅读Redis源代码，一个成品的软件要去理解都是一个复杂的系统，就拿我阅读hdfs代码和redis代码的感受来说，感受这么一个系统的
-开发过程是一个很好的历练过程，单纯的让造个轮子或者一个座位非常简单，如果让造个飞机那就要命啦（ps: <strong>搬砖vs盖楼</strong>)，做这个对比是为了
-告诉自己现在选择的学习方式是对的，要好好阅读代码。<em>发现阅读代码类似于一个事务，如果决定做了就要下定决心坚持去看，如果三天打鱼两天
-晒网的，这些东西就不能连贯，不能像一个整体一样体现</em>。</p>
-<h3>总结</h3>
-<p>总结小世界，感受大世界。</p>
+<p><strong>ziplist</strong>是一个特殊编码的双向链表,能够很高效的使用内存.能够存储<code>string</code>和<code>intege</code>，其中整数使用实际的二进制
+，在两端O(1)复杂度内完成push和pop操作,每一个操作都需要重新分配内存(<strong>realloc</strong>),实际的复杂度跟内存的使用量
+有关。</p>
+<h3>一.ziplist的结构</h3>
+<p>ziplist整体结构:
+<code>&lt;zlbytes&gt;&lt;zltail&gt;&lt;zllen&gt;&lt;entry&gt;&lt;entry&gt;&lt;zlend&gt;</code></p>
+<ul>
+<li><code>zlbytes</code>: 是一个非负整数，用来保存整个ziplist的字节长度，是的我们不用遍历获取长度，直接可以重新设置
+ziplist的长度.</li>
+<li><code>zltail</code>: ziplist中最后一个entry的偏移量, 方便在尾端进行pop操作. </li>
+<li><code>zllen</code>: ziplist中entry的数量.</li>
+<li><code>zlend</code>: 等于255的特殊字节，表示ziplist的结束.</li>
+</ul>
+<hr />
+<p>ziplist entry结构: <code>&lt;header&gt;&lt;data&gt;</code></p>
+<ul>
+<li>
+<p><code>header</code>: header区分为两个部分 </p>
+<p><strong>1)</strong> 前一个entry的长度,使得ziplist能够从后向前遍历, 如果前一个entry的长度小于254字节,只需要一个字节
+表示长度；如果一个entry的长度大于或者等于254字节,使用五个字节表示长度，其中第一个字节等于254,后续四个字节
+表示实际的长度.</p>
+<p><strong>2)</strong> 数据类型及长度编码
+<em> |00PPPPPP|: 字符串类型，长度小于等于63 bytes
+</em> |01PPPPPP|PPPPPPPP|: 字符串类型，长度小于等于16383字节
+<em> |10PPPPPP|PPPPPPPP|PPPPPPPP|PPPPPPPP|PPPPPPPP|: 字符串类型, 长度大于等于16384字节
+</em> |11000000|: 整数类型, int16_t
+<em> |11010000|: 整数类型, int32_t
+</em> |11100000|: 整数类型, int64_t
+<em> |11110000|: 整数类型, 24 bit signed
+</em> |11111110|: 整数类型, 8 bit signed
+<em> |1111xxxx|: 整数类型, 4 bit integer
+</em> |11111111|: ziplist的结束符</p>
+</li>
+</ul>
+<p><strong>以上所有的整数都是使用小端表示</strong></p>
+<h3>二.ziplist操作</h3>
+<p>待续</p>
 <!-- Duoshuo Comment BEGIN -->
 	<div class="ds-thread"></div>
 <script type="text/javascript">
