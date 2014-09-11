@@ -8,7 +8,7 @@
     <meta name="description" content="小毛驴CodingWorld, 记录一个Coder的成长" />
     <meta name="baidu-site-verification" content="OqbZT1T9J5" />
     <title>
-Redis源码阅读--小毛驴
+其实那些没什么--小毛驴
 </title>
     <link rel="shortcut icon" href="/donkey.ico" />
     <link rel="bookmark" href="/donkey.ico"/>
@@ -101,45 +101,12 @@ Redis源码阅读--小毛驴
     <div class="container">
              
 
-<h2>Redis源码阅读</h2>
+<h2>其实那些没什么</h2>
 <hr />
-<p><strong>ziplist</strong>是一个特殊编码的双向链表,能够很高效的使用内存.能够存储<code>string</code>和<code>intege</code>，其中整数使用实际的二进制
-，在两端O(1)复杂度内完成push和pop操作,每一个操作都需要重新分配内存(<strong>realloc</strong>),实际的复杂度跟内存的使用量
-有关。</p>
-<h3>一.ziplist的结构</h3>
-<p>ziplist整体结构:
-<code>&lt;zlbytes&gt;&lt;zltail&gt;&lt;zllen&gt;&lt;entry&gt;&lt;entry&gt;&lt;zlend&gt;</code></p>
-<ul>
-<li><code>zlbytes</code>: 是一个非负整数，用来保存整个ziplist的字节长度，是的我们不用遍历获取长度，直接可以重新设置
-ziplist的长度.</li>
-<li><code>zltail</code>: ziplist中最后一个entry的偏移量, 方便在尾端进行pop操作. </li>
-<li><code>zllen</code>: ziplist中entry的数量.</li>
-<li><code>zlend</code>: 等于255的特殊字节，表示ziplist的结束.</li>
-</ul>
-<hr />
-<p>ziplist entry结构: <code>&lt;header&gt;&lt;data&gt;</code></p>
-<ul>
-<li>
-<p><code>header</code>: header区分为两个部分 </p>
-<p><strong>1)</strong> 前一个entry的长度,使得ziplist能够从后向前遍历, 如果前一个entry的长度小于254字节,只需要一个字节
-表示长度；如果一个entry的长度大于或者等于254字节,使用五个字节表示长度，其中第一个字节等于254,后续四个字节
-表示实际的长度.</p>
-<p><strong>2)</strong> 数据类型及长度编码
-<em> |00PPPPPP|: 字符串类型，长度小于等于63 bytes
-</em> |01PPPPPP|PPPPPPPP|: 字符串类型，长度小于等于16383字节
-<em> |10PPPPPP|PPPPPPPP|PPPPPPPP|PPPPPPPP|PPPPPPPP|: 字符串类型, 长度大于等于16384字节
-</em> |11000000|: 整数类型, int16_t
-<em> |11010000|: 整数类型, int32_t
-</em> |11100000|: 整数类型, int64_t
-<em> |11110000|: 整数类型, 24 bit signed
-</em> |11111110|: 整数类型, 8 bit signed
-<em> |1111xxxx|: 整数类型, 4 bit integer
-</em> |11111111|: ziplist的结束符</p>
-</li>
-</ul>
-<p><strong>以上所有的整数都是使用小端表示</strong></p>
-<h3>二.ziplist操作</h3>
-<p>待续</p>
+<p>哈哈，还是在帝都，还是有点感慨，我和小花最近都没有消停过，在北京和西安跑来跑去，我们为了实验室担忧，反过来我们还成了最近发生一切的始作俑者，
+刘老师前后两天大反转还是蛮令人失望的，我们还是操多心了，享受回西安这两天安静的看书学习，忘记这些烦恼，眼前的人或者事情，其实并没有什么，和
+自己又有什么关系。</p>
+<p><em>好好的享受安静，好好的读书，好好的写代码</em></p>
 <!-- Duoshuo Comment BEGIN -->
 	<div class="ds-thread"></div>
 <script type="text/javascript">
