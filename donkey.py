@@ -35,6 +35,9 @@ conf = {
     "domain": "www.smalllv.cn"
 }
 
+if len(sys.argv) >= 2 and sys.argv[1] == "local":
+    conf["domain"] = "127.0.0.1:8000"
+
 #解析页面
 def parserPage(page):
     with open(page, "r") as f:

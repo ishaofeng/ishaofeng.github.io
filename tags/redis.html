@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <base href="http://www.smalllv.cn" >
+    <base href="http://127.0.0.1:8000" >
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="keywords" content="Linux,Python,Vim,Hadoop,Redis,大数据,跑步" />
@@ -12,7 +12,8 @@
     redis--小毛驴
 
 </title>
-    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="shortcut icon" href="/donkey.ico" />
+    <link rel="bookmark" href="/donkey.ico"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Loading Bootstrap -->
@@ -24,9 +25,8 @@
     <link href="css/highlight/github.css" rel="stylesheet">
 
     <link href="css/style.css" rel="stylesheet">
-    <link rel="shortcut icon" href="img/favicon.ico">
      
-	<link rel="alternate" type="application/rss+xml" title="RSS" href="http://www.smalllv.cn/rss.xml">
+	<link rel="alternate" type="application/rss+xml" title="RSS" href="http://127.0.0.1:8000/rss.xml">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
     <!--[if lt IE 9]>
@@ -88,10 +88,7 @@
 
     <div class="container">
              
-<div id="sidebar">
-    <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=1&ptype=0&speed=0&skin=10&isTitle=0&noborder=1&isWeibo=0&isFans=0&uid=1714550751&verifier=7dc72b55&colors=34495e,34495e,22b14c,0082cb,ecfbfd&dpc=1"></iframe>
-</div>
-<div id="main">
+<div id="main" class="col-md-9">
     
         <div class="post">
             <i class="icon-bookmark"></i>
@@ -99,6 +96,11 @@
             <span class="pull-right">2014-08-08</span>
         </div>
     
+</div>
+<div id="sidebar" class="col-md-3">
+    <div class="sidebaritem">
+        <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=1&ptype=0&speed=0&skin=10&isTitle=0&noborder=1&isWeibo=0&isFans=0&uid=1714550751&verifier=7dc72b55&colors=34495e,34495e,22b14c,0082cb,ecfbfd&dpc=1"></iframe>
+    </div>
 </div>
 
     </div>
@@ -129,7 +131,7 @@
         var search = function() {
             q = document.getElementById("searchinput");
             if (q.value != "") {
-                window.open('http://www.baidu.com/s?si=www.smalllv.cn&cl=3&ct=2097152&tn=bds&word=' + q.value, "_blank");
+                window.open('http://www.baidu.com/s?si=127.0.0.1:8000&cl=3&ct=2097152&tn=bds&word=' + q.value, "_blank");
                 return false;
             } else {
                 return false;
