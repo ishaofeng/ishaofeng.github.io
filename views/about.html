@@ -1,0 +1,30 @@
+[% extends "base.html" %]
+
+[% block title %]
+[[ post.title ]]--小毛驴
+[% endblock %]
+
+[% block style %]
+#fakirimg {
+    max-width: 390px;
+    max-height: 470px;
+    margin-top: 50px;
+    margin-left: 50px;
+    margin-right: 50px;
+}
+[% endblock %]
+
+[% block content %]
+
+<div class="row">
+    <div class="col-md-7">
+        [[post.content]]
+    </div>
+    <div class="col-md-5">
+        <img id="fakirimg" class="pull-right" src="/img/fakir.png" alt="fakir" title="fakirimg">
+    </div>
+</div>
+[% include "comment.html" %]
+
+[% endblock %]
+

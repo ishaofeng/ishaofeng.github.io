@@ -8,11 +8,23 @@
 [% endif %]
 [% endblock %]
 
+[% block style %]
+.posttag {
+    width: 100px;
+    display: inline-block;
+}
+[% endblock %]
+
 [% block content %]
 <div id="main" class="col-md-9">
     [% for post in posts %]
         <div class="post">
-            <i class="icon-bookmark"></i>
+            <span class="label label-success arrowed posttag">
+                <i class="icon-bookmark pull-left"></i>
+                <a style="color: white;" href="/tags/[[post.tags[0]]].html">
+                    [[post.tags[0]]]
+                </a>
+            </span>
             <a href="[[post.url]]">[[post.title]]</a>
             <span class="pull-right">[[post.date]]</span>
         </div>

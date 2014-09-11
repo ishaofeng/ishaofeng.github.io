@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <base href="http://127.0.0.1:8000" >
+    <base href="http://www.smalllv.cn" >
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="keywords" content="Linux,Python,Vim,Hadoop,Redis,大数据,跑步" />
@@ -24,7 +24,8 @@
 
     <link href="css/style.css" rel="stylesheet">
      
-	<link rel="alternate" type="application/rss+xml" title="RSS" href="http://127.0.0.1:8000/rss.xml">
+	<link rel="alternate" type="application/rss+xml" title="RSS" href="http://www.smalllv.cn/rss.xml">
+
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
     <!--[if lt IE 9]>
@@ -35,6 +36,15 @@
         .container {
             margin-top: 53px;
         }
+        
+#fakirimg {
+    max-width: 390px;
+    max-height: 470px;
+    margin-top: 50px;
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
     </style>
   </head>
   <body>
@@ -87,7 +97,9 @@
     <div class="container">
              
 
-<h2>关于我</h2>
+<div class="row">
+    <div class="col-md-7">
+        <h2>关于我</h2>
 <hr />
 <p>我叫<strong>fakir</strong></p>
 <p>这个博客是我学习的一部分</p>
@@ -99,6 +111,11 @@
 <p>希望能够认识更多朋友，一起做一些有意义的事情</p>
 <p><strong>Email:</strong><a href="mailto:ishaofeng@foxmail.com">ishaofeng@foxmail.com</a></p>
 <hr />
+    </div>
+    <div class="col-md-5">
+        <img id="fakirimg" class="pull-right" src="/img/fakir.png" alt="fakir" title="fakirimg">
+    </div>
+</div>
 <!-- Duoshuo Comment BEGIN -->
 	<div class="ds-thread"></div>
 <script type="text/javascript">
@@ -143,7 +160,7 @@ var duoshuoQuery = {short_name:"smalllv"};
         var search = function() {
             q = document.getElementById("searchinput");
             if (q.value != "") {
-                window.open('http://www.baidu.com/s?si=127.0.0.1:8000&cl=3&ct=2097152&tn=bds&word=' + q.value, "_blank");
+                window.open('http://www.baidu.com/s?si=www.smalllv.cn&cl=3&ct=2097152&tn=bds&word=' + q.value, "_blank");
                 return false;
             } else {
                 return false;

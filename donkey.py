@@ -162,7 +162,7 @@ if __name__ == "__main__":
     #生成about页面
     aboutPost = parserPage("./mds/about.md")
     conf["post"] = aboutPost
-    aboutHtml = view("post.html", conf)
+    aboutHtml = view("about.html", conf)
     with open("./about.html", "w") as f:
         f.write(aboutHtml)
 
