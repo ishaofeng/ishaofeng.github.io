@@ -8,7 +8,7 @@
     <meta name="description" content="小毛驴CodingWorld, 记录一个Coder的成长" />
     <meta name="baidu-site-verification" content="OqbZT1T9J5" />
     <title>
-做个安静的Coder--小毛驴
+使用Ipad作为ubuntu的扩展屏幕--小毛驴
 </title>
     <link rel="shortcut icon" href="/donkey.ico" />
     <link rel="bookmark" href="/donkey.ico"/>
@@ -103,22 +103,49 @@
     <div class="container">
              
 
-<h2>做个安静的Coder</h2>
+<h2>使用Ipad作为ubuntu的扩展屏幕</h2>
 <hr />
-<h3>回归</h3>
-<p>终于回到西安了，在学校有了一点点学生的感觉，这两天在阅读Redis源代码,安安静静的学习学习,项目的事情已经不想再去想了，老板性情变化无常
-实在没有办法，也不去计较这么写东东.早一点毕业或许是最好的解决办法。性格多么直爽不见得是什么好事情，内敛才是处世的王道，尤其和性格变
-化无常的人，哎呀我还是安静的做个Coder,思考这么些处世的事情还是太累。</p>
-<h3>头发</h3>
-<p>昨天姐姐来家里说感觉我的头发越来越稀疏了，实在点在了我的痛楚，当时做SYSJ太耗体力和脑力，当初可能太傻了，到现在这个境地没有人关注你的
-过去的付出，老板或者甲方都看的是眼前的利益，就像我那永远也考不了的科目二。</p>
-<h3>学习</h3>
-<p>最近在阅读Redis源代码，一个成品的软件要去理解都是一个复杂的系统，就拿我阅读hdfs代码和redis代码的感受来说，感受这么一个系统的
-开发过程是一个很好的历练过程，单纯的让造个轮子或者一个座位非常简单，如果让造个飞机那就要命啦（ps: <strong>搬砖vs盖楼</strong>)，做这个对比是为了
-告诉自己现在选择的学习方式是对的，要好好阅读代码。<em>发现阅读代码类似于一个事务，如果决定做了就要下定决心坚持去看，如果三天打鱼两天
-晒网的，这些东西就不能连贯，不能像一个整体一样体现</em>。</p>
-<h3>总结</h3>
-<p>总结小世界，感受大世界。</p>
+<p>使用自己笔记本再写代码的的时候总是觉得屏幕不够用，在实验室的时候我直接连接一个显示器，虽然屏幕是扩展了一天下来自己脸受不了总是感觉疼的(Ps:做码农
+真苦逼). 所以一直想用自己的pad做一个小的扩展，其实很多时候有这么一个小的扩展已经足够啦。在网上找了很长时间发现现成可用的屏幕扩展的方法都是使用
+付费软件，并且大部分只能支持mac或者windows, 最终在神奇的google的帮助下找到了这个折中的办法，虽然没有直接再连接一个显示器那么方便，但是已经能够很
+大程度上解决我的问题了。</p>
+<h3>1. 安装synergy</h3>
+<p><a href="http://synergy-project.org">Synergy</a>是一个能够在多台计算机之间共享鼠标和键盘的免费软件，这个软件是一个免费软件，能够同时支持linux,windows,mac
+以前在实验室的时候使用这个软件把自己笔记本和实验室的电脑一起控制，另外还有人把这个软件还移植到android上面了。</p>
+<p>安装好以后在系统菜单启动或者使用 nohup synergy &amp; 启动,然后选择配置服务器,在界面上拖动小电脑如下图命名</p>
+<p><img alt="synergyconfig" src="/img/synergyconfig.png" /></p>
+<p>其中<code>shaopc</code>是我的电脑, <code>left</code>表示ipad, 你可以按照爱好选择方式则位置</p>
+<h3>2. 安装vnc</h3>
+<p>执行如下命令安装vncserver</p>
+<pre><code>sudo apt-get install vnc4server xvnc4viewer   #安装软件
+vnc4server :1                                 #创建端口号为5901的远程访问桌面
+vncviewer :1                                  #访问远程桌面， 密码使用vncpasswd设置
+</code></pre>
+<p>我们将创建的远程桌面访问到的桌面成为left</p>
+<h3>3. 安装tmux</h3>
+<p>tmux是用来在终端分屏的软件，这里安装tmux主要是为了让ipad方面的桌面和电脑显示的桌面共用一个终端</p>
+<pre><code>sudo apt-get install tmux                     #安装软件
+tmux -S /tmp/share                            #在电脑的终端中执行 
+tmux -S /tmp/share attach                     #在远程桌面中打开的终端执行
+</code></pre>
+<p>在这一步执行完成后我们发现，远程桌面和我们电脑桌面上的终端信息是同步的, 我们交互的是同一个终端会话</p>
+<h3>4. ipad中安装vnc</h3>
+<p>在ipad中安装vnc, 直接在app store中搜索vnc直接进行安装即可， 如果电脑使用的是无线网那么直接让ipad也连接无线网，
+否则使用笔记本创建无线网然后ipad连接。</p>
+<p>进行如下配置:</p>
+<ol>
+<li>打开安装好的vnc软件</li>
+<li>添加连接 地址写 主机ip:5901, 名字写ipad</li>
+<li>直接连接如果需要密码输入vncpasswd创建的密码</li>
+<li>以上步骤完成以后就可以进入第一步创建的桌面, 但是此时键盘和鼠标还是不能共享</li>
+<li>在远程桌面中打开一个新的终端输入 <code>synergyc --name left localhost</code></li>
+<li>此时鼠标和键盘就可以共享了, 按照之前配置的方向从主机屏幕边缘拖出即可计入ipad访问的桌面</li>
+</ol>
+<h3>Over</h3>
+<p>使用中发现, 有时候鼠标在远程桌面中看不见，可以直接在本机打开一个远程桌面进行操作，平时在远程桌面
+中只打开终端，然后在synergy中配置快捷键，方便的在两个屏幕之间进行切换.我还会继续摸索怎么方便的使用.</p>
+<p>最终的效果:
+<img alt="ipadubuntu" src="/img/ubuntuipad.png" /></p>
 <!-- Duoshuo Comment BEGIN -->
 	<div class="ds-thread"></div>
 <script type="text/javascript">
