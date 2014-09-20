@@ -8,7 +8,7 @@
     <meta name="description" content="小毛驴CodingWorld, 记录一个Coder的成长" />
     <meta name="baidu-site-verification" content="OqbZT1T9J5" />
     <title>
-关于我--小毛驴
+github.js使用--小毛驴
 </title>
     <link rel="shortcut icon" href="/donkey.ico" />
     <link rel="bookmark" href="/donkey.ico"/>
@@ -42,14 +42,7 @@
         }
         
         
-#fakirimg {
-    max-width: 390px;
-    max-height: 470px;
-    margin-top: 50px;
-    margin-left: 50px;
-    margin-right: 50px;
-}
-
+        
     </style>
   </head>
   <body>
@@ -112,25 +105,49 @@
     <div class="container">
              
 
-<div class="row">
-    <div class="col-md-7">
-        <h2>关于我</h2>
+<h2>github.js使用</h2>
 <hr />
-<p>我叫<strong>fakir</strong></p>
-<p>这个博客是我学习的一部分</p>
-<p>我专注于Linux,Haoop各种数据平台相关技术</p>
-<p>纯粹的VI控</p>
-<p>Python业余爱好者,喜欢折腾Bottle</p>
-<p><strong>目标:</strong> 成为一个优秀的数据工程师--&gt;架构师--&gt;能做有意义事情的人</p>
-<p><strong>但是:</strong> 目标是远大的,所有都得从脚下做起</p>
-<p>希望能够认识更多朋友，一起做一些有意义的事情</p>
-<p><strong>Email:</strong><a href="mailto:ishaofeng@foxmail.com">ishaofeng@foxmail.com</a></p>
-<hr />
-    </div>
-    <div class="col-md-5">
-        <img id="fakirimg" class="pull-right" src="/img/fakir.png" alt="fakir" title="fakirimg">
-    </div>
-</div>
+<p><strong>github.js</strong>是对github v3接口的一个javascript库, 这个库是prose.io的人创建的，
+prose.io是一个在线对github上内容进行编辑的网站(ps:界面很简洁使用很方便),github
+本身的api接口非常简洁是学习api设计的好的范本,我在这是把github.js的接口使用一遍.</p>
+<h3>1. 登陆</h3>
+<p>Github的api调用认证方式有两种:
+* 一种是使用传统的basic认证的方式</p>
+<pre><code>var github = new Github({
+    username: "USERNAME",
+    password: "PASSWORD",
+    auth: "basic"
+})
+</code></pre>
+<p>这种方式虽然使用简单但是存在一定的安全问题，但对于自己博客来说使用这种方式
+还是可行的。</p>
+<ul>
+<li>
+<p>另一种是oauth2.0认证使用token的方式</p>
+<p>var github = new Github({
+    token: "TOKEN",
+    auth: "oauth"
+})</p>
+</li>
+</ul>
+<p>token本身分为两种一种是自己手动生成的用户个人访问token, 另一种是对授权应用的token</p>
+<h3>2. Repo API</h3>
+<ul>
+<li>获取repo   <code>var repo = github.getRepo(username, reponame)</code></li>
+<li>显示repo的信息 <code>repo.show(function(err, repo) {})</code></li>
+<li>获取指定路径的内容 <code>repo.contents(branch, "path/to/dir", function(err, contents){}, sync)</code></li>
+<li>fork一个repo <code>repo.fork(function(err) {})</code></li>
+<li>创建新的分支  <code>repo.branch(oldBranchName, newBranchName, function(err){})</code></li>
+<li>列出所有分支 <code>repo.listBranches(function(err, branches){})</code></li>
+<li>在指定路径存储内容 <code>repo.write("master", "path/to/file", "NEW_CONTENTS", \
+        "COMMIT_MESSAGE", function(err){})</code></li>
+<li>读取指定路径内容 <code>repo.read("master", "path/to/file", function(err, data){})</code></li>
+<li>移动文件 <code>repo.move("master", "path/to/file", "path/to/new_file", function(err){})</code></li>
+<li>删除文件 <code>repo.remove("master", "path/to/file", function(err){})</code></li>
+<li>访问repo的根路径的文件　<code>repo.getTree("master", function(err, tree){})</code></li>
+<li>递归访问repo的的所有文件 <code>repo.getTree("master?recursive=true", function(err, tree){})</code></li>
+<li>给定一个文件路径获取响应的blob或tree的sha <code>repo.getSha("master", "/path/to/file", function(err, sha){})</code></li>
+</ul>
 <!-- Duoshuo Comment BEGIN -->
 	<div class="ds-thread"></div>
 <script type="text/javascript">

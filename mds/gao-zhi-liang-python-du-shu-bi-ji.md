@@ -1,0 +1,65 @@
+title: 高质量Python读书笔记
+tags: python,读书笔记
+date: 2014-09-13
+***
+####1.字符串格式化
+
+    #一般方式格式化(我大部分这么写的)
+    print 'Hello %s!' % ('Tom', ) 
+
+    #pythonic方式
+    value = {"greet": "hello world", "language": "Python"}
+    print "%(greet)s from %(language)s" % value
+
+    #more pythonic方式
+    print '{0} from {1}'.format("hello world", "Python")
+    print '{greet} from {language}'.format(**value)
+    print '{greet} from {language}'.format(greet="hello world", language="Python")
+    print '{score:0.3}'.format(score=45.422342)
+
+上述的格式化方法以前都见过学习过，但是习惯使然，大部分情况下我都使用的
+第一种，其实后面两种在复杂格式化中很方便并且清晰明了，比如一个格式化中
+某个值要多次出现，书上说最后一种是python最推荐的方式
+
+
+####2.switch...case的替代方案
+c,c++或者java中的switch case在python中没有直接支持，一般使用的时候都是
+使用多个if..elif..else关系替换，在这本书上看到一个替代方式感觉蛮好，在
+以上支持swtich case的语言中switch case与if..else...最大的不同是前者是一步
+定位后者是逐步比较，下述代码说明了python上的替代方式，使用字典完成
+
+    def f(x):
+        return {
+            0: "you typed zero.\n",
+            1: "you are in top.\n",
+            2: "n is event number.\n"
+        }.get(n. "only single-digit numbers are allowed\n")
+
+####3.Python的常量
+Python使用常量的方式书上列出了两种方式:
+* 通过命名方式，常量名所有字母大写并且各个单词之间使用下划线连接
+* 通过自定义的类实现常量功能,满足**命名全部为大写**和**值一旦绑定
+便不可再修改**这两个条件，下面代码是作者列出的一个实现
+
+    class _const:
+        class ConstError(TypeError): pass
+        class ConstCastError(ConstError): pass
+
+        def __setattr__(self, name, value):
+            if name in self.__dict__:
+                raise self.ConstError, "Can't change const %s" % name
+            
+            if not name.isupper():
+                raise self.ConstCastError,  \
+                    'const name "%s" is not all uppercase' % name
+
+            self.__dict__[name] = value
+    
+    import sys
+    sys.modules[__name__] = _const()
+
+> 一般干活的时候都使用的是第一种，因为在其它语言中我们一般是通过命名的方式
+> 弄到，但是我用的那些语言都支持const关键字或者类似的关键字，通过作者
+> 提供的第二种方式能够避免，常变量错误修改
+
+
