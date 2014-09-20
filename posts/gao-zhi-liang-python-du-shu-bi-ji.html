@@ -163,6 +163,26 @@ sys.modules[__name__] = _const()
 弄到，但是我用的那些语言都支持const关键字或者类似的关键字，通过作者
 提供的第二种方式能够避免，常变量错误修改</p>
 </blockquote>
+<h4>4.改变默认字符编码</h4>
+<p>python２.7x中的默认编码是ascii编码,设置编码的方式有很多中这里说说</p>
+<ol>
+<li>在代码文件之前执行选项之后加入<code>#encoding=utf8</code>,　这样文件中如果
+中文就可以执行</li>
+<li>
+<p>上述设置，如果你从文件中读取汉字的化还是会出错，所以我一般在牵涉
+中文字符串处理的代码的文件中添加如下代码，改变默认编码</p>
+<p>import sys
+reload(sys)
+sys.setdefaultencoding("utf8")</p>
+</li>
+</ol>
+<p>说到这里我得提一件事情，之前研一的时候和同学参加腾讯QRobot机器人编程
+大赛，我们的后台是使用python写的，在我们这边几个环境中都妥妥的，腾讯
+的人说我们的代码在他们那边一直有乱码，饮恨到现在，呜呜, 还么有想清楚
+为什么在这边多个系统中都是妥妥的.
+3. 在python3.0之后默认的编码已经变为unicode,而在2.7x中可以使用<code>from __future__import unicode_literals</code>
+使用这项功能.</p>
+<p><strong>上述三种方式中第三种显然最好，当然最最好的是转向python3.0以后的版本</strong></p>
 <!-- Duoshuo Comment BEGIN -->
 	<div class="ds-thread"></div>
 <script type="text/javascript">
