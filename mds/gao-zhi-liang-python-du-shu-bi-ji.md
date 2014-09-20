@@ -70,6 +70,7 @@ python２.7x中的默认编码是ascii编码,设置编码的方式有很多中�
 2. 上述设置，如果你从文件中读取汉字的化还是会出错，所以我一般在牵涉
 中文字符串处理的代码的文件中添加如下代码，改变默认编码
 
+
     import sys
     reload(sys)
     sys.setdefaultencoding("utf8")
