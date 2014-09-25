@@ -5,6 +5,13 @@
 [% endblock %]
 
 [% block style %]
+#donkey {
+    max-width: 390px;
+    max-height: 470px;
+    margin-top: 50px;
+    margin-left: 50px;
+    margin-right: 50px;
+}
 [% endblock %]
 
 [% block content %]
@@ -12,6 +19,9 @@
 <div class="row">
     <div class="col-md-7">
         [[post.content]]
+    </div>
+    <div class="col-md-5">
+        <img id="donkey" class="pull-right" src="/img/donkey.jpg" alt="donkey" title="donkey">
     </div>
 </div>
 [% include "comment.html" %]
