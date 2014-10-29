@@ -41,7 +41,7 @@ if len(sys.argv) >= 2 and sys.argv[1] == "local":
     conf["domain"] = "127.0.0.1:8000"
 
 #解析页面
-def parserPage(page):
+def parserPage(page, title, url):
     with open(page, "r") as f:
         f.readline()
         titleline = f.readline()
@@ -56,9 +56,9 @@ def parserPage(page):
         content = markdown.markdown(content)
 
         return {
-                "title": "关于我",
+                "title": title,
                 "content": content,
-                "url": "/about.html"}
+                "url": url}
 
 #解析文档
 def parserMds():
@@ -162,11 +162,18 @@ if __name__ == "__main__":
            f.write(tagHtml)
 
     #生成about页面
-    aboutPost = parserPage("./mds/about.md")
+    aboutPost = parserPage("./mds/about.md", "关于我", "/about.html")
     conf["post"] = aboutPost
     aboutHtml = view("about.html", conf)
     with open("./about.html", "w") as f:
         f.write(aboutHtml)
+
+    #生成love页面
+    lovePage = parserPage("./mds/love.md", "保证书", "/love.html")
+    conf["post"] = lovePage
+    loveHtml = view("love.html", conf)
+    with open("./love.html", "w") as f:
+        f.write(loveHtml)
 
     with open("index.html", "w") as f:
         f.write(content)
