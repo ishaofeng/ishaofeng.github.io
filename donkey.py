@@ -35,7 +35,9 @@ conf = {
     "domain": "www.smalllv.cn"
 }
 
+deploy="github"
 if len(sys.argv) >= 2 and sys.argv[1] == "local":
+    deploy = "local"
     conf["domain"] = "127.0.0.1:8000"
 
 #解析页面
@@ -168,3 +170,7 @@ if __name__ == "__main__":
 
     with open("index.html", "w") as f:
         f.write(content)
+
+    if deploy == "local":
+        os.system("python -m SimpleHTTPServer")
+
