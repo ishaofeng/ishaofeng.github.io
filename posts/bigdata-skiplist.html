@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <base href="http://www.smalllv.cn" >
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="keywords" content="Linux,Python,Vim,Hadoop,Redis,大数据,跑步" />
+    <meta name="description" content="小毛驴CodingWorld, 记录一个Coder的成长" />
+    <meta name="baidu-site-verification" content="OqbZT1T9J5" />
+    <title>
+大数据算法之SkipList--小毛驴
+</title>
+    <link rel="shortcut icon" href="/donkey.ico" />
+    <link rel="bookmark" href="/donkey.ico"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Loading Bootstrap -->
+    <link href="css/vendor/bootstrap.min.css" rel="stylesheet">
+    <!-- Loading Flat UI -->
+    <link href="css/flat-ui.css" rel="stylesheet">
+      
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/highlight/github.css" rel="stylesheet">
+
+    <link href="css/style.css" rel="stylesheet">
+     
+	<link rel="alternate" type="application/rss+xml" title="RSS" href="http://www.smalllv.cn/rss.xml">
+
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
+    <!--[if lt IE 9]>
+      <script src="js/vendor/html5shiv.js"></script>
+      <script src="js/vendor/respond.min.js"></script>
+    <![endif]-->
+    <style type="text/css">
+        .container {
+            margin-top: 53px;
+        }
+        
+        #login {
+            margin-left: 40px;
+        }
+        
+        
+        
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-5">
+            <span class="sr-only">Toggle navigation</span>
+          </button>
+          <a class="navbar-brand" href="#">小毛驴</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="navbar-collapse-5">
+          <ul class="nav navbar-nav">
+            <li><a href="#">主页</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">分类<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                
+                    <li><a href="/tags/生活杂记.html">生活杂记</a></li>
+                
+                    <li><a href="/tags/python.html">python</a></li>
+                
+                    <li><a href="/tags/redis.html">redis</a></li>
+                
+                    <li><a href="/tags/网络知识.html">网络知识</a></li>
+                
+                    <li><a href="/tags/源码阅读.html">源码阅读</a></li>
+                
+                    <li><a href="/tags/读书笔记.html">读书笔记</a></li>
+                
+                    <li><a href="/tags/工具.html">工具</a></li>
+                
+                    <li><a href="/tags/Web技术.html">Web技术</a></li>
+                
+              </ul>
+            </li>
+            <li><a href="/about.html">关于我</a></li>
+           </ul>
+          <form class="navbar-form navbar-right" action="javascript:search()" role="search">
+            <div class="form-group">
+              <div class="input-group">
+                <input class="form-control" id="searchinput" type="search" placeholder="Search">
+                <span class="input-group-btn">
+                  <button type="submit" class="btn"><span class="icon-search"></span></button>
+                </span>
+              </div>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" id="login">
+                    <i class="icon-github icon-large"></i>
+                    登陆
+                </button>
+            </div>
+          </form>
+        </div><!-- /.navbar-collapse -->
+      </nav>
+
+    <div class="container">
+             
+
+<h2>大数据算法之SkipList</h2>
+<hr />
+<h3>1.前言</h3>
+<p>最早在了解LevelDB的时候指导SkipList,之前在阅读Redis代码的时候了解到Redis中的zset的实现使用了SkipList，今天看书把SkipList自己实现一下并且查了一下资料了解一下SkipList的使用。</p>
+<h3>2.特点</h3>
+<p>SkipList是一种可以替代平衡二叉搜索树的数据结构，二叉树不需要强制平衡，使用随机生成树在一定概率上保证数据的分布平衡，其插入，删除和查找的时间复杂度为<em>O(log(N))</em>.</p>
+<p><strong>优点：</strong></p>
+<blockquote>
+<ul>
+<li>在SkipList上的插入或者删除仅仅影响和它相邻的节点，只产生局部影响，而平衡二叉树可能存在大量节点参与的再平衡</li>
+<li>因为操作的局部影响的特点，SkipList能够支持更高的并发操作，小粒度的锁能够保证多个读者写者同时对数据结构进行操作</li>
+<li>Cache友好，在并发环境下如果在节点增删只有很少量节点发生改变因而多核的缓存不需要更新，从而对Cache友好</li>
+<li>并发操作下使用 Hand-over-hand locking保证不产生死锁，所有操作要进行小范围的加所的时候都是从前向后加</li>
+</ul>
+</blockquote>
+<h3>3.实现</h3>
+<p>下述代码是我使用C写的一个实现SkipList结构中使用的一个SkipListNode作为header,从而简化在没有节点时的操作</p>
+<pre><code>#include "cbase.h"
+
+/*
+ * SkipList数据结构实现
+ */
+
+#define MAX_LEVEL 8
+
+
+typedef struct SkipListNode
+{
+  int key;
+void *value;
+int level;
+
+struct SkipListNode *forward[MAX_LEVEL];
+} SkipListNode;
+
+typedef struct SkipList
+{
+    int level;  //当前最高层
+    SkipListNode header;
+} SkipList;
+
+//释放节点值
+void freeValue(void *value)
+{
+    if (value != NULL)
+    {
+        free(value);
+    }
+}
+
+//创建SkipList
+SkipList *createSkipList()
+{
+    SkipList *list = (SkipList *)malloc(sizeof(SkipList));
+    if (NULL == list)
+    {
+        return NULL;
+    }
+
+    list-&gt;level = 0;
+    memset(list-&gt;header.forward, 0, sizeof(SkipListNode *) * MAX_LEVEL);
+
+    return list;
+}
+
+//释放SkipListNode
+void destroySkipListNode(SkipListNode *node)
+{
+    if (NULL == node)
+    {
+        return ;
+    }
+
+    freeValue(node-&gt;value);
+    free(node);
+}
+
+//释放SkipList
+void destroySkipList(SkipList **list)
+{
+    if (NULL == list)
+    {
+        return ;
+    }
+
+    SkipListNode *current  = &amp;(*list)-&gt;header, *deleteNode;
+    while (current-&gt;forward[0] != NULL)
+    {
+        deleteNode = current-&gt;forward[0];
+
+        current-&gt;forward[0] = deleteNode-&gt;forward[0];
+
+        destroySkipListNode(deleteNode);
+    }
+
+    free(*list);
+
+    *list = NULL;
+}
+
+
+//创建SkipList节点
+SkipListNode *createSkipListNode(int key, void *value, int level)
+{
+    SkipListNode *node = (SkipListNode *)malloc(sizeof(SkipListNode));
+    if (NULL == node)
+    {
+        return NULL;
+    }
+
+    node-&gt;key = key;
+    node-&gt;value = value;
+    node-&gt;level = level;
+
+    memset(node-&gt;forward, 0, sizeof(SkipListNode *) * MAX_LEVEL);
+
+    return node;
+
+}
+//随机生成层次
+int randomLevel()
+{
+    int level = 0;
+
+    while (rand() * 1.0 / RAND_MAX &gt; 0.5 &amp;&amp; level &lt; MAX_LEVEL)
+    {
+        ++level;
+    }
+
+    return level;
+}
+
+
+//插入元素
+SkipList *insertSkipList(SkipList *list, int key, void *value)
+{
+    if (NULL == list)
+    {
+        return list;
+    }
+
+    SkipListNode *update[MAX_LEVEL];
+    SkipListNode *current = &amp;list-&gt;header;
+
+    for (int i = list-&gt;level; i &gt;= 0; --i)
+    {
+        while (current-&gt;forward[i] != NULL &amp;&amp; current-&gt;forward[i]-&gt;key &lt; key)
+        {
+            current = current-&gt;forward[i];
+        }
+
+        update[i] = current;
+    }
+
+    current = update[0]-&gt;forward[0];
+    if (current != NULL &amp;&amp; current-&gt;key == key) //插入的节点已经存在
+    {
+        freeValue(current-&gt;value);
+        current-&gt;value = value;
+    }
+    else //插入新节点
+    {
+        //更新skiplist最高层次
+        int level = randomLevel();
+        if (level &gt; list-&gt;level)
+        {
+            for (int i = list-&gt;level + 1; i &lt;= level; ++i)
+            {
+                update[i] = &amp;list-&gt;header;
+            }
+            list-&gt;level = level;
+        }
+
+        SkipListNode *newnode = createSkipListNode(key, value, level);
+        assert(newnode != NULL);
+
+        //插入节点
+        for (int i = 0; i &lt;= level; ++i)
+        {
+            newnode-&gt;forward[i] = update[i]-&gt;forward[i];
+            update[i]-&gt;forward[i] = newnode;
+        }
+    }
+}
+
+//搜索skiplist
+SkipListNode *searchSkipList(SkipList *list, int key)
+{
+    if (NULL == list)
+    {
+        return NULL;
+    }
+
+    SkipListNode *current = &amp;list-&gt;header;
+    for (int i = list-&gt;level; i &gt;= 0; --i)
+    {
+        while (current-&gt;forward[i] != NULL &amp;&amp; current-&gt;forward[i]-&gt;key &lt; key)
+        {
+            current = current-&gt;forward[i];
+        }
+
+        if (current-&gt;forward[i] != NULL &amp;&amp; current-&gt;forward[i]-&gt;key == key)
+        {
+            return current-&gt;forward[i];
+        }
+    }
+
+    return NULL;
+}
+
+//删除skiplist节点
+void deleteSkipList(SkipList *list, int key)
+{
+    if (NULL == list)
+    {
+        return ;
+    }
+
+    SkipListNode *update[MAX_LEVEL];
+    SkipListNode *current = &amp;list-&gt;header;
+
+    for (int i = list-&gt;level; i &gt;= 0; --i)
+    {
+        while (current-&gt;forward[i] != NULL &amp;&amp; current-&gt;forward[i]-&gt;key &lt; key)
+        {
+            current = current-&gt;forward[i];
+        }
+
+        update[i] = current;
+    }
+
+    current = update[0]-&gt;forward[0];
+    if (current != NULL &amp;&amp; current-&gt;key == key) //找到要删除的节点
+    {
+        freeValue(current-&gt;value);
+
+        for (int i = 0; i &lt;= current-&gt;level; ++i)
+        {
+            update[i]-&gt;forward[i] = current-&gt;forward[i];
+        }
+
+        if (current-&gt;level == list-&gt;level &amp;&amp; NULL == list-&gt;header.forward[list-&gt;level])
+        {
+            --list-&gt;level;
+        }
+    }
+}
+//辅助函数
+//打印skiplist
+void printSkipList(SkipList *list)
+{
+    if (NULL == list)
+    {
+        return ;
+    }
+
+    SkipListNode *current = list-&gt;header.forward[0];
+    printf("=======skiplist=======\n");
+    while (current != NULL)
+    {
+        println("key: %d  level: %d", current-&gt;key, current-&gt;level);
+        current = current-&gt;forward[0];
+    }
+}
+
+int main()
+{
+    srand(time(NULL));
+
+    printf("插入\n");
+    SkipList *list = createSkipList();
+    insertSkipList(list, 10, NULL);
+    insertSkipList(list, 1, NULL);
+    insertSkipList(list, 12, NULL);
+    insertSkipList(list, 7, NULL);
+    insertSkipList(list, 9, NULL);
+    insertSkipList(list, 3, NULL);
+    insertSkipList(list, 28, NULL);
+    insertSkipList(list, 29, NULL);
+    insertSkipList(list, 11, NULL);
+    insertSkipList(list, 30, NULL);
+    insertSkipList(list, 27, NULL);
+
+    printSkipList(list);
+
+    printf("删除\n");
+    deleteSkipList(list, 10);
+    printSkipList(list);
+
+    println("查找: %d", searchSkipList(list, 30)-&gt;key);
+
+    return 0;
+}
+</code></pre>
+<hr />
+<p><a href="http://www.drdobbs.com/parallel/choose-concurrency-friendly-data-structu/208801371">[1]Choose Concurrency-Friendly Data Structures</a></p>
+<!-- Duoshuo Comment BEGIN -->
+	<div class="ds-thread"></div>
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"smalllv"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- Duoshuo Comment END -->
+
+
+    </div>
+      
+    <script type="text/javascript">
+        function hasClass(obj, cls) {  
+            return obj.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));  
+        }
+        function addClass(obj, cls) {  
+            if (!this.hasClass(obj, cls)) obj.className += " " + cls;  
+        } 
+
+       function render_pretty(){
+            var pres = $("pre");
+            for (var i = 0; i < pres.length; ++i) 
+            {
+                if (pres[i].firstChild && pres[i].firstChild.nodeName == "CODE")
+                {
+                    hljs.highlightBlock(pres[i].firstChild);
+                }
+            }
+        }
+
+        window.onload = function(){
+           render_pretty();
+        };
+
+        var search = function() {
+            q = document.getElementById("searchinput");
+            if (q.value != "") {
+                window.open('http://www.baidu.com/s?si=www.smalllv.cn&cl=3&ct=2097152&tn=bds&word=' + q.value, "_blank");
+                return false;
+            } else {
+                return false;
+            }
+        };
+
+    </script>
+   <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1253231687'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s5.cnzz.com/z_stat.php%3Fid%3D1253231687%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));</script>
+
+    <!-- jQuery (necessary for Flat UI's JavaScript plugins) -->
+    <script src="js/vendor/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/flat-ui.min.js"></script>
+    <script src="js/highlight.pack.js"></script>
+
+  </body>
+</html>
