@@ -8,9 +8,7 @@
     <meta name="description" content="小毛驴CodingWorld, 记录一个Coder的成长" />
     <meta name="baidu-site-verification" content="OqbZT1T9J5" />
     <title>
-
-    python--小毛驴
-
+LeetCode--小毛驴
 </title>
     <link rel="shortcut icon" href="/donkey.ico" />
     <link rel="bookmark" href="/donkey.ico"/>
@@ -44,11 +42,7 @@
         }
         
         
-.posttag {
-    width: 100px;
-    display: inline-block;
-}
-
+        
     </style>
   </head>
   <body>
@@ -112,47 +106,73 @@
 
     <div class="container">
              
-<div id="main" class="col-md-9">
-    
-        <div class="post">
-            <span class="label label-success arrowed posttag">
-                <i class="icon-bookmark pull-left"></i>
-                <a style="color: white;" href="/tags/python.html">
-                    python
-                </a>
-            </span>
-            <a href="/posts/learn-pyquery.html">pyquery学习</a>
-            <span class="pull-right">2014-10-28</span>
-        </div>
-    
-        <div class="post">
-            <span class="label label-success arrowed posttag">
-                <i class="icon-bookmark pull-left"></i>
-                <a style="color: white;" href="/tags/python.html">
-                    python
-                </a>
-            </span>
-            <a href="/posts/gao-zhi-liang-python-du-shu-bi-ji.html">高质量Python读书笔记</a>
-            <span class="pull-right">2014-09-13</span>
-        </div>
-    
-        <div class="post">
-            <span class="label label-success arrowed posttag">
-                <i class="icon-bookmark pull-left"></i>
-                <a style="color: white;" href="/tags/python.html">
-                    python
-                </a>
-            </span>
-            <a href="/posts/shi-yong-python-xia-zai-duo-kan-dian-zi-shu.html">使用Python下载多看电子书</a>
-            <span class="pull-right">2014-08-02</span>
-        </div>
-    
-</div>
-<div id="sidebar" class="col-md-3">
-    <div class="sidebaritem">
-        <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=1&ptype=0&speed=0&skin=10&isTitle=0&noborder=1&isWeibo=0&isFans=0&uid=1714550751&verifier=7dc72b55&colors=34495e,34495e,22b14c,0082cb,ecfbfd&dpc=1"></iframe>
-    </div>
-</div>
+
+<h2>LeetCode</h2>
+<hr />
+<blockquote>
+<p>Suppose a sorted array is rotated at some pivot unknown to you beforehand.
+(i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
+You are given a target value to search. If found in the array return its index, otherwise return -1.
+You may assume no duplicate exists in the array.</p>
+</blockquote>
+<p>对问题进行分析，该问题与对有序序列进行查找的二分查找类似需要考虑的是在分的时候的特殊情况，A为序列数组，start,end分别是区间的开始和技术，<code>mid=(start+end)&gt;&gt;1</code>为区间的中间，mid将区间非为有序区间和无须区间两个部分，两个部分成为sec1,sec2,进行处理时存在一下情况: (考虑改变end的方向)</p>
+<ol>
+<li><code>A[mid] == target</code>此时找到结果</li>
+<li><code>A[start]&lt;A[end]</code>此时区间为递增区间使用与二法查找一致的比较方式, <code>target&lt;A[mid]</code></li>
+<li>target落在sec1(<code>target &gt; A[end]</code>),此时mid可能在sec1,也可能在sec2<ul>
+<li>mid在sec1(<code>A[mid] &gt; A[end]</code>),且此时<code>target&lt;A[mid]</code>时end减小</li>
+<li>mid在sec2(<code>A[mid] &lt; A[end]</code>)</li>
+</ul>
+</li>
+<li>target落在sec2(<code>target &lt; A[end]</code>),此时需要mid在sec2并且<code>target&lt;A[mid]</code>时end减小</li>
+</ol>
+<p>最终代码如下:</p>
+<pre><code>int search(int A[], int n, int target)
+{
+    if (NULL == A)
+    {
+        return -1;
+    }
+
+    int start = 0;
+    int end = n - 1;
+    int mid;
+
+    while (start &lt;= end)
+    {
+        mid = (start + end) &gt;&gt; 1;
+        if (A[mid] == target)
+        {
+            return mid;
+        }
+        else if (A[start] &lt; A[end] &amp;&amp; target &lt; A[mid] || target &gt; A[end] &amp;&amp; (A[mid] &lt; A[end] || target &lt; A[mid]) || A[mid] &lt; A[end] &amp;&amp; target &lt; A[mid])
+        {
+            end = mid - 1;
+        }
+        else
+        {
+            start = mid + 1;
+        }
+    }
+
+    return -1;
+}
+</code></pre>
+<!-- Duoshuo Comment BEGIN -->
+	<div class="ds-thread"></div>
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"smalllv"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- Duoshuo Comment END -->
+
 
     </div>
       
