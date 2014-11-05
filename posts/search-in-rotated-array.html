@@ -8,7 +8,7 @@
     <meta name="description" content="小毛驴CodingWorld, 记录一个Coder的成长" />
     <meta name="baidu-site-verification" content="OqbZT1T9J5" />
     <title>
-LeetCode--小毛驴
+SearchInRotatedSortedArray--小毛驴
 </title>
     <link rel="shortcut icon" href="/donkey.ico" />
     <link rel="bookmark" href="/donkey.ico"/>
@@ -107,7 +107,7 @@ LeetCode--小毛驴
     <div class="container">
              
 
-<h2>LeetCode</h2>
+<h2>SearchInRotatedSortedArray</h2>
 <hr />
 <blockquote>
 <p>Suppose a sorted array is rotated at some pivot unknown to you beforehand.
@@ -145,7 +145,8 @@ You may assume no duplicate exists in the array.</p>
         {
             return mid;
         }
-        else if (A[start] &lt; A[end] &amp;&amp; target &lt; A[mid] || target &gt; A[end] &amp;&amp; (A[mid] &lt; A[end] || target &lt; A[mid]) || A[mid] &lt; A[end] &amp;&amp; target &lt; A[mid])
+        else if (A[start] &lt; A[end] &amp;&amp; target &lt; A[mid] || target &gt; A[end] \
+            &amp;&amp; (A[mid] &lt; A[end] || target &lt; A[mid]) || A[mid] &lt; A[end] &amp;&amp; target &lt; A[mid])
         {
             end = mid - 1;
         }

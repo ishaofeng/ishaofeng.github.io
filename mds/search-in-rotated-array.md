@@ -1,4 +1,4 @@
-title: LeetCode:SearchInRotatedSortedArray
+title: SearchInRotatedSortedArray
 tags: LeetCode
 date: 2014-11-05
 ***
@@ -37,7 +37,8 @@ date: 2014-11-05
             {
                 return mid;
             }
-            else if (A[start] < A[end] && target < A[mid] || target > A[end] && (A[mid] < A[end] || target < A[mid]) || A[mid] < A[end] && target < A[mid])
+            else if (A[start] < A[end] && target < A[mid] || target > A[end] \
+                && (A[mid] < A[end] || target < A[mid]) || A[mid] < A[end] && target < A[mid])
             {
                 end = mid - 1;
             }
