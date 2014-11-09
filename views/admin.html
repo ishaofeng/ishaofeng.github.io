@@ -1,0 +1,195 @@
+<!doctype html>
+<html>
+    <head>
+        <title>小毛驴</title>
+        <script src="http://cdn.bootcss.com/marked/0.3.2/marked.min.js"></script>
+        <script src="http://cdn.bootcss.com/highlight.js/8.2/highlight.min.js"></script>
+        
+        <script src="http://cdn.bootcss.com/codemirror/4.7.0/codemirror.min.js"></script>
+        <script src="http://cdn.bootcss.com/codemirror/4.7.0/addon/mode/overlay.min.js"></script>
+        <script src="http://cdn.bootcss.com/codemirror/4.7.0/mode/xml/xml.min.js"></script>
+        <script src="http://cdn.bootcss.com/codemirror/4.7.0/mode/markdown/markdown.min.js"></script>
+        <script src="http://cdn.bootcss.com/codemirror/4.7.0/mode/gfm/gfm.min.js"></script>
+        <script src="http://cdn.bootcss.com/codemirror/4.7.0/mode/javascript/javascript.min.js"></script>
+        <link href="http://cdn.bootcss.com/codemirror/4.7.0/codemirror.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://bootflat.github.io/bootflat/css/bootflat.css">
+        <link href="http://cdn.bootcss.com/highlight.js/8.2/styles/github.min.css" rel="stylesheet">
+        
+        <style>
+            .CodeMirror pre{
+              line-height: 14px;
+            }
+            .row {
+                margin: 0px;
+            }
+            #in, .CodeMirror{
+              overflow: auto;
+              font-size: 12px;
+              box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+              padding-left: 0px;
+              padding-right: 0px;
+              height: 100%;
+            }
+            .CodeMirror-scroll {
+                height: 100%;
+            }
+            
+            #out{
+              overflow: auto;
+              color: #444;
+              font-family:Georgia, Palatino, 'Palatino Linotype', Times, 'Times New Roman', serif;
+              font-size: 16px;
+              line-height: 1.5em;
+              height: 100%;
+            }
+            
+            #editor {
+                border-top: 1px solid #c4b9b9;
+                position: absolute;
+                top: 40px;
+                height: 100%;
+                width: 100%;
+            }
+            
+            #header {
+                padding-top: 4px;
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+            
+            #header label {
+                padding-left: 10px;
+            }
+            
+            
+        </style>
+</head>
+<body>
+    <div id="header" class="row">
+        <form class="form-inline" role="form" id="info">
+            <div class="form-group">
+                <label class="control-label" for="postname">文章标题:</label>
+                <input type="text" class="form-control" id="postname" placeholder="请输入文章标题"></input>
+            </div>
+            <div class="form-group">
+                <label class="control-label" for="catagery">文章分类:</label>
+                <select class="form-control" id="catagery">
+                    [% for tag in tags %]
+                        <option>[[ tag ]]</option>
+                    [% endfor %]
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary pull-right" id="submit">发布文章</button>
+        </form>
+           
+    </div>
+    <div id="editor" class="row">
+        <div id="in" class="col-xs-6">
+            <textarea id="code"></textarea>
+        </div>
+        <div id="out" class="col-xs-6"></div>
+    </div>
+    
+   
+   <!-- Bootstrap -->
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- Bootflat's JS files.-->
+    <script src="https://bootflat.github.io/bootflat/js/icheck.min.js"></script>
+    <script src="https://bootflat.github.io/bootflat/js/jquery.fs.selecter.min.js"></script>
+    <script src="https://bootflat.github.io/bootflat/js/jquery.fs.stepper.min.js"></script>
+    <script src="http://cdn.bootcss.com/vue/0.11.0-rc3/vue.min.js"></script>
+    
+  <script>
+    marked.setOptions({
+        gfm: true,
+        tables: true,
+        breaks: false,
+        pedantic: false,
+        sanitize: true,
+        smartLists: true,
+        smartypants: false,
+        highlight: function(code){
+            return hljs.highlightAuto(code).value;
+        }
+    });
+
+    function update(inst, obj){
+        var value = inst.getValue();
+        
+        //本地存储
+        localStorage["donkey"] = value;
+        
+        var lines = value.split("\n");
+        if (lines.length >= 3)
+        {
+            lines.splice(1,2);
+            var title = lines[0];
+            if (title.split(" ").length >= 2)
+            {
+                lines[0] = "##" + title.split(" ")[1];
+                value = lines.join("\n");
+            }
+        }
+        
+        document.getElementById("out").innerHTML = marked(value);
+    }
+
+    var editor = CodeMirror.fromTextArea(document.getElementById('code'), {
+        mode: 'gfm',
+        lineNumbers: true,
+        matchBrackets: true,
+        lineWrapping: true,
+        theme: 'default',
+    });
+    editor.on("change", update);
+
+    if (localStorage["donkey"])
+    {
+        editor.setValue(localStorage["donkey"]);
+    }
+      
+    $("#info").submit(function(e){
+        e.preventDefault();
+        var name = $("#postname").val();
+        var md = editor.getValue();
+        var html = $("#out").html();
+        
+        $.post("/post", {name: name, postmd: md, posthtml: html}, function(data) { alert(data);});
+    })
+    
+    
+             
+    update(editor);
+    editor.focus();
+  </script>
+    </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

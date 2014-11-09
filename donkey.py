@@ -7,6 +7,7 @@ sys.setdefaultencoding("utf-8")
 
 from jinja2 import *
 from datetime import datetime
+from bottle import *
 import os
 import markdown
 import operator
@@ -52,6 +53,7 @@ def parserPage(page, title, url):
         content = "##%s\n" % title
         content += f.read()
 
+
         #转换文章
         content = markdown.markdown(content)
 
@@ -68,6 +70,9 @@ def parserMds():
 
     posts = []
     for md in mds:
+        if md[0].endswith("html"):
+            continue
+
         with open(md[0], "r") as f:
             titleline = f.readline()
             if "page" not in titleline:
@@ -79,11 +84,20 @@ def parserMds():
                 tags = tagline.split(":")[1].strip("# \n").split(",")
                 date = dateline.split(":")[1].strip("# \n")
 
-                content = "##%s\n" % title
-                content += f.read()
 
+                content = ""
                 #转换文章
-                content = markdown.markdown(content)
+                filename = os.path.basename(md[0])
+                filename = filename[0:filename.index(".")] + ".html"
+                htmlpath = root_dir + "mds/" + filename
+                if os.path.exists(htmlpath):
+                    with open(htmlpath) as hf:
+                        content = hf.read()
+                else:
+                    content = "##%s\n" % title
+                    content += f.read()
+                    content = markdown.markdown(content)
+
                 posts.append({
                     "title": title,
                     "tags": tags,
@@ -136,8 +150,11 @@ def parserMds():
 
     return (tags, sortposts)
 
-if __name__ == "__main__":
-    tags, posts = parserMds()
+def savefile(path, content):
+    with open(path, "w") as f:
+        f.write(content)
+
+def generateAll(tags, posts):
     conf["posts"] = posts
     conf["tags"] = tags
     content = view("index.html", conf)
@@ -178,6 +195,41 @@ if __name__ == "__main__":
     with open("index.html", "w") as f:
         f.write(content)
 
+
+app = Bottle()
+
+@app.get("/admin")
+def callback():
+    tagkeys = [tag["title"] for tag in tags]
+    return view("admin.html", {"tags": tagkeys})
+
+@app.post("/post")
+def callback():
+    postname = request.POST["name"]
+    postmd = request.POST["postmd"]
+    posthtml = request.POST["posthtml"]
+
+    if postname and postmd and posthtml:
+        savefile("./mds/" + postname + ".md", postmd)
+        savefile("./mds/" + postname + ".html", posthtml)
+        tags, posts = parserMds()
+        generateAll(tags, posts)
+
+
+        return "true"
+    else:
+        return "false"
+
+@app.get("/<path:path>")
+def callback(path):
+    return static_file(path, root=root_dir)
+
+
+if __name__ == "__main__":
+    #解析文档
+    tags, posts = parserMds()
+
     if deploy == "local":
         os.system("python -m SimpleHTTPServer")
-
+    else:
+        run(app, host="127.0.0.1", port=8001)
