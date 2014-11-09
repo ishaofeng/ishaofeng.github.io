@@ -121,7 +121,6 @@ def parserMds():
     tags = {}
     for i, post in enumerate(sortposts):
         for tag in post["tags"]:
-            print tag
             if tag not in tags:
                 tags[tag] = {}
                 tags[tag]["posts"] = []
@@ -145,7 +144,6 @@ def parserMds():
             return 0
 
     sorttags = sorted(tags, cmp=tagcmp, reverse=True)
-    print sorttags
 
 
     return (tags, sortposts)
@@ -232,4 +230,6 @@ if __name__ == "__main__":
     if deploy == "local":
         os.system("python -m SimpleHTTPServer")
     else:
+        generateAll(tags, posts)
         run(app, host="127.0.0.1", port=8001)
+
