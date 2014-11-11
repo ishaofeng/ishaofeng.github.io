@@ -155,6 +155,7 @@ def savefile(path, content):
 def generateAll(tags, posts):
     conf["posts"] = posts
     conf["tags"] = tags
+    conf["title"] = u"小毛驴|Coding World";
     content = view("index.html", conf)
 
     #生成文章页面
