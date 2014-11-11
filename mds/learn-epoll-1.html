@@ -1,0 +1,67 @@
+<h2 id="epoll-">epoll的基本概念</h2>
+<hr>
+<p>select/poll/epoll多路复用功能顺序增强,select最大打开文件数限制FD_SETSIZE默认是1024,并且进行更改还很麻烦,epoll的最大限制取决于系统内存,对于大量连接,FD数量特别大，但是同一时间内活跃的socket很少，select/poll每次调用都需要线性扫描集合，因而性能会随着FD的增加而线性降低</p>
+<p><strong>poll vs select:</strong></p>
+<ul>
+<li>select()使用fd_set传入要监控的事件，因而每一次循环需要拷贝fd_set,而poll传入一次时间数组可以一直使用</li>
+<li>poll()能够处理更多的文件描述符,而select()最多能够处理1024个(通过重新编译能够支持大于1023)</li>
+<li>poll()的超时使用的是毫秒，而select的超时使用的是<code>struct timeval</code>精度更高</li>
+<li>都是使用线性的方式处理文件描述符,处理的描述符越多速度越慢</li>
+</ul>
+<p>epoll只对活跃的socket进行操作</p>
+<p><strong>epoll工作方式: LT, ET</strong></p>
+<ul>
+<li>LT: 默认模式，支持阻塞和非阻塞socket, 内核通知一个描述符就绪，如果不进行处理还会继续通知。水平触发。</li>
+<li>ET: 高速模式, 只支持非阻塞socket,从描述符未就绪变为就绪,内核通知这个描述符就绪，如果已经通知你知道了，则不会再为那个文件描述符发送就绪通知，直到响应描述符状态发生改变。边缘触发。</li>
+</ul>
+<p><strong>注意:</strong>来自内核的可读通知仅仅是有可读的可能，如果文件描述符还没有就绪，但是收到了来自内核的通知如果这个时候去读对于阻塞socket那么当前读操作将会阻塞，因而在使用可读通知事件时使用非阻塞模式的socket</p>
+<p><strong>接口:</strong></p>
+<ul>
+<li>头文件<code>#include &lt;sys/epoll.h&gt;</code></li>
+<li>epoll_create: 创建一个epoll文件描述符<pre><code><span class="hljs-comment">//maxfds是epoll所支持的句柄数</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">epoll_create</span><span class="hljs-params">(<span class="hljs-keyword">int</span> size)</span></span>;
+</code></pre></li>
+<li>epoll_ctl: 用来添加或者删除需要侦听的文件描述符及其事件<pre><code><span class="hljs-comment">//epfd是epoll_create的返回值</span>
+<span class="hljs-comment">//op表示动作:</span>
+<span class="hljs-comment">//        EPOLL_CTRL_ADD: 注册新的fd</span>
+<span class="hljs-comment">//        EPOLL_CTRL_MOD： 修改已经注册的</span>
+<span class="hljs-comment">//        EPOLL_CTRL_DEL: 删除一个注册的fd</span>
+<span class="hljs-comment">//fd表示需要监听的描述符</span>
+<span class="hljs-comment">//event表示要监听的事件</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">epoll_ctl</span><span class="hljs-params">(<span class="hljs-keyword">int</span> epfd, <span class="hljs-keyword">int</span> op, <span class="hljs-keyword">int</span> fd, <span class="hljs-keyword">struct</span> epoll_event *<span class="hljs-keyword">event</span>)</span></span>;
+<span class="hljs-comment">//epoll_event结构</span>
+typedef union epoll_data
+{
+  <span class="hljs-keyword">void</span> *ptr;
+     <span class="hljs-keyword">int</span> fd;
+  __uint32_t u32;
+  __uint64_t u64;
+} epoll_data_t;
+<span class="hljs-keyword">struct</span> epoll_event
+{
+  __uint32_t events;
+  epoll_data_t data;
+}
+</code></pre>struct epoll_event中的events是下列的宏的集合:<ul>
+<li>EPOLLIN: 文件描述符可读</li>
+<li>EPOLLOUT: 文件描述符可写</li>
+<li>EPOLLPRI: 文件描述符有带外数据到来</li>
+<li>EPOLLERR: 文件描述符发生错误</li>
+<li>EPOLLHUP: 文件描述符挂断</li>
+<li>EPOLLLET: 将EPOLL设置为边缘触发模式</li>
+<li>EPOLLONESHOT: 只监听一次事件</li>
+</ul>
+</li>
+<li>epoll_wait/epoll_pwait: 接受发生在被侦听的描述符上用户感兴趣的事件<pre><code><span class="hljs-comment">//events从内核中得到的时间集合</span>
+<span class="hljs-comment">//maxevents告诉内核这个events最大为多大，不能大于epoll_create的size</span>
+<span class="hljs-comment">//timeout表示超时时间（毫秒), 0表示立即返回，-1永久阻塞</span>
+<span class="hljs-comment">//返回值表示需要处理的时间数目，0表示已经超时</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">epoll_wait</span><span class="hljs-params">(<span class="hljs-keyword">int</span> epfd, <span class="hljs-keyword">struct</span> epoll_event *events, <span class="hljs-keyword">int</span> maxevents, <span class="hljs-keyword">int</span> timeout)</span></span>;
+</code></pre></li>
+<li>close: 关闭epoll文件描述符，任何被侦听的文件描述符被删除后相应的也会被从被侦听的文件描述符集合中删除，<strong>自动删除</strong></li>
+</ul>
+<p><strong>参考:</strong></p>
+<ul>
+<li><a href="http://daniel.haxx.se/docs/poll-vs-select.html">poll vs select vs event-based</a></li>
+<li><a href="http://www.kegel.com/c10k.html">The C10K problem</a></li>
+</ul>
