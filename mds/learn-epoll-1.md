@@ -1,6 +1,6 @@
 title: epoll的基本概念
 tags: redis
-date: 2014-11-10
+date: 2014-11-11
 ***
 select/poll/epoll多路复用功能顺序增强,select最大打开文件数限制FD_SETSIZE默认是1024,并且进行更改还很麻烦,epoll的最大限制取决于系统内存,对于大量连接,FD数量特别大，但是同一时间内活跃的socket很少，select/poll每次调用都需要线性扫描集合，因而性能会随着FD的增加而线性降低
 
