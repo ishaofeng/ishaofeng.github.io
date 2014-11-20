@@ -132,7 +132,6 @@
 
 #define MAX_LEVEL 8
 
-
 typedef struct SkipListNode
 {
   int key;
@@ -207,7 +206,6 @@ void destroySkipList(SkipList **list)
     *list = NULL;
 }
 
-
 //创建SkipList节点
 SkipListNode *createSkipListNode(int key, void *value, int level)
 {
@@ -238,7 +236,6 @@ int randomLevel()
 
     return level;
 }
-
 
 //插入元素
 SkipList *insertSkipList(SkipList *list, int key, void *value)
