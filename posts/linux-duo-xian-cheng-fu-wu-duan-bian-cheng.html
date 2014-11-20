@@ -8,9 +8,7 @@
     <meta name="description" content="小毛驴CodingWorld, 记录一个Coder的成长" />
     <meta name="baidu-site-verification" content="OqbZT1T9J5" />
     <title>
-
-    读书笔记--小毛驴
-
+Linux多线程服务端编程--小毛驴
 </title>
     <link rel="shortcut icon" href="/donkey.ico" />
     <link rel="bookmark" href="/donkey.ico"/>
@@ -44,11 +42,7 @@
         }
         
         
-.posttag {
-    width: 100px;
-    display: inline-block;
-}
-
+        
     </style>
   </head>
   <body>
@@ -112,58 +106,67 @@
 
     <div class="container">
              
-<div id="main" class="col-md-9">
-    
-        <div class="post">
-            <span class="label label-success arrowed posttag">
-                <i class="icon-bookmark pull-left"></i>
-                <a style="color: white;" href="/tags/读书笔记.html">
-                    读书笔记
-                </a>
-            </span>
-            <a href="/posts/linux-duo-xian-cheng-fu-wu-duan-bian-cheng.html">Linux多线程服务端编程</a>
-            <span class="pull-right">2014-11-19</span>
-        </div>
-    
-        <div class="post">
-            <span class="label label-success arrowed posttag">
-                <i class="icon-bookmark pull-left"></i>
-                <a style="color: white;" href="/tags/读书笔记.html">
-                    读书笔记
-                </a>
-            </span>
-            <a href="/posts/daemon.html">守护者进程</a>
-            <span class="pull-right">2014-11-04</span>
-        </div>
-    
-        <div class="post">
-            <span class="label label-success arrowed posttag">
-                <i class="icon-bookmark pull-left"></i>
-                <a style="color: white;" href="/tags/读书笔记.html">
-                    读书笔记
-                </a>
-            </span>
-            <a href="/posts/bigdata-skiplist.html">大数据算法之SkipList</a>
-            <span class="pull-right">2014-10-30</span>
-        </div>
-    
-        <div class="post">
-            <span class="label label-success arrowed posttag">
-                <i class="icon-bookmark pull-left"></i>
-                <a style="color: white;" href="/tags/python.html">
-                    python
-                </a>
-            </span>
-            <a href="/posts/gao-zhi-liang-python-du-shu-bi-ji.html">高质量Python读书笔记</a>
-            <span class="pull-right">2014-09-13</span>
-        </div>
-    
-</div>
-<div id="sidebar" class="col-md-3">
-    <div class="sidebaritem">
-        <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=1&ptype=0&speed=0&skin=10&isTitle=0&noborder=1&isWeibo=0&isFans=0&uid=1714550751&verifier=7dc72b55&colors=34495e,34495e,22b14c,0082cb,ecfbfd&dpc=1"></iframe>
-    </div>
-</div>
+
+<h2 id="linux-">Linux多线程服务端编程</h2>
+<hr>
+<h3 id="-">一.线程安全的对象生命期管理</h3>
+<h4 id="1-1-">1.1 析构函数遇到多线程</h4>
+<p><strong>多线程访问一个对象可能存在的竞态条件:</strong></p>
+<ul>
+<li>析构一个对象是，是否在其它线程中正在执行该对象的函数</li>
+<li>函数执行期间，对象不会在另一个线程中被析构</li>
+<li>调用对象函数之前，该对象是否还有效</li>
+</ul>
+<p><strong>线程安全定义:</strong></p>
+<ul>
+<li>多线程访问时表现出正确的行为</li>
+<li>无论操作系统如何调度这些线程,无论线程执行顺序如何交织</li>
+<li>调用端不需要额外的同步或其它协作</li>
+</ul>
+<p><em>就像我们在使用标准库或者第三库时，如果某个对象或者类是线程安全的我们在多线程环境下可以任意调用，否则就要自己进行同步操作</em></p>
+<p><strong>对象构造过程中线程安全:</strong></p>
+<ul>
+<li>对象构造期间不要将this指针泄露给其它对象，未完全构造完成的对象被其它线程访问其结果是不可预料的</li>
+<li><strong>构造方式:</strong>二段式构造,使用构造函数+initialize(),保证构造函数安全使用initialize()函数的返回判断构造结果</li>
+</ul>
+<p><strong>mutex作为数据成员不能保护析构:</strong></p>
+<ul>
+<li>A,B两个线程中通知操作对象h, 如果A中释放了h， B中的检测没有发现h释放，继续使用发生上述竞态</li>
+<li>mutex用来保证类的函数之间的竞争不能保证析构函数中的竞争</li>
+<li>只有在别的线程访问不到对象时，析构才是安全的</li>
+<li>mutex在同时读写一个对象时可能存在死锁问题<pre><code><span class="hljs-comment">//A,B两个线程分别执行swap(a,b), swap(b,a)可能存在死锁问题</span>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">swap</span><span class="hljs-params">(Counter &amp;a, Counter &amp;b)</span>
+</span>{
+  <span class="hljs-function">MutexLockGuard <span class="hljs-title">aLock</span><span class="hljs-params">(a.mutex)</span></span>;
+  <span class="hljs-function">MutexLockGuard <span class="hljs-title">bLock</span><span class="hljs-params">(b.mutex)</span></span>;
+  int64_t <span class="hljs-keyword">value</span> = a.<span class="hljs-keyword">value</span>;
+  a.<span class="hljs-keyword">value</span> = b.<span class="hljs-keyword">value</span>;
+  b.<span class="hljs-keyword">value</span> = <span class="hljs-keyword">value</span>;
+}
+</code></pre>  <em>上述问题可以通过对相同类型多个对象加锁时，始终保证以相同的顺序加锁</em></li>
+</ul>
+<p><strong>面向对象程序设计三种关系:</strong></p>
+<ul>
+<li>composition(组合/复合): </li>
+<li>aggregation(聚合): 与<strong>关联</strong>类似但是有整体和部分的关系</li>
+<li>association(关联/联系): a对象用到b对象，调用了b的函数，a持有b的指针或者引用,但是b的的生命周期不由a控制</li>
+</ul>
+
+<!-- Duoshuo Comment BEGIN -->
+	<div class="ds-thread"></div>
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"smalllv"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- Duoshuo Comment END -->
+
 
     </div>
       
