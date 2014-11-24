@@ -156,7 +156,7 @@ def generateAll(tags, posts):
     conf["posts"] = posts
     conf["tags"] = tags
     conf["title"] = u"小毛驴|Coding World";
-    content = view("index.html", conf)
+    indexcontent = view("index.html", conf)
 
     #生成文章页面
     for post in posts:
@@ -192,7 +192,7 @@ def generateAll(tags, posts):
         f.write(loveHtml)
 
     with open("index.html", "w") as f:
-        f.write(content)
+        f.write(indexcontent)
 
 
 app = Bottle()
