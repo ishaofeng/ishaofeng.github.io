@@ -77,6 +77,8 @@
                 
                     <li><a href="/tags/工具.html">工具</a></li>
                 
+                    <li><a href="/tags/cpp.html">cpp</a></li>
+                
                     <li><a href="/tags/LeetCode.html">LeetCode</a></li>
                 
                     <li><a href="/tags/Web技术.html">Web技术</a></li>
@@ -149,7 +151,6 @@ for i in xrange(start, pageCount):
 
     browser.execute_script("var btn = $('.u-layer #activity_tip_dialog').parent().css('display') == 'none'; if (btn) { \
                 $('.u-btn.j-close').click()}")
-
 
     print browser.save_screenshot("./%s/%s_%05d" % (name, name, i))
 </code></pre>

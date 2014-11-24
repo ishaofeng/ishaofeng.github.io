@@ -77,6 +77,8 @@
                 
                     <li><a href="/tags/工具.html">工具</a></li>
                 
+                    <li><a href="/tags/cpp.html">cpp</a></li>
+                
                     <li><a href="/tags/LeetCode.html">LeetCode</a></li>
                 
                     <li><a href="/tags/Web技术.html">Web技术</a></li>
@@ -131,7 +133,6 @@
  */
 
 #define MAX_LEVEL 8
-
 
 typedef struct SkipListNode
 {
@@ -207,7 +208,6 @@ void destroySkipList(SkipList **list)
     *list = NULL;
 }
 
-
 //创建SkipList节点
 SkipListNode *createSkipListNode(int key, void *value, int level)
 {
@@ -238,7 +238,6 @@ int randomLevel()
 
     return level;
 }
-
 
 //插入元素
 SkipList *insertSkipList(SkipList *list, int key, void *value)
