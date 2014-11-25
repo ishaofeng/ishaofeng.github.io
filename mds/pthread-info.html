@@ -1,0 +1,57 @@
+<h2 id="pthread-">pthread资料</h2>
+<hr>
+<h3 id="1-">1.线程</h3>
+<p><strong>进程:</strong>
+进程是由操作系统创建,作为系统运行的实体,一个进程包含程序资源和程序执行的状态</p>
+<ul>
+<li>进程ID，进程组ID，用户ID，用户组ID</li>
+<li>环境</li>
+<li>工作目录</li>
+<li>程序指令</li>
+<li>寄存器</li>
+<li>栈</li>
+<li>堆</li>
+<li>文件描述符</li>
+<li>信号指令</li>
+<li>共享库</li>
+<li>进程间通讯工具(消息队列,管道,信号量,共享内存)</li>
+</ul>
+<p><strong>线程:</strong>
+线程存在于上述进程资源中, 能够被操作系统<strong>调度</strong>作为一个作为一个独立的实体，线程仅仅重复少数重要的资源使其能够执行。下述为一个线程所需要的</p>
+<ul>
+<li>栈指针</li>
+<li>寄存器</li>
+<li>调度属性(策略和优先级)</li>
+<li>信号</li>
+<li>线程私有数据</li>
+</ul>
+<p><strong>进程线程对比:</strong></p>
+<ul>
+<li>线程存在与进程之中，使用进程的资源</li>
+<li>线程能够获取CPU时间片,操作系统层级支持</li>
+<li>线程只重复独立调度所需要的资源</li>
+<li>线程的生命周期不大于进程</li>
+<li>因为大部分资源已经共享了进程的，所以线程是轻量级的</li>
+</ul>
+<p><strong>线程优势:</strong></p>
+<ul>
+<li>通过多线程在进行IO的时候能同时进行计算</li>
+<li>任务优先级可控制</li>
+<li>异步事件处理</li>
+</ul>
+<p><strong>pthread(POSIX thread)是为了统一不同硬件和操作系统线程实现的一个统一实现</strong></p>
+<p><strong>多线程编程模型:</strong></p>
+<ul>
+<li><strong>Manager/worker:</strong> 一个manger线程管理其它线程，处理所有的输入和分发任务到worker线程,1)静态工作线程池2)动态工作线程池.</li>
+<li><strong>Pipeline:</strong>一个任务分为多个子任务，这些任务并行执行</li>
+<li><strong>Peer:</strong>一个主线程创建线程以后和子线程同时开始工作,GUI程序通常使用主线程控制界面，其它线程完成后台任务。</li>
+</ul>
+<p><strong>内存共享模型:</strong></p>
+<ul>
+<li>每个线程有自己的栈还有线程私有数据</li>
+<li>所有线程共享堆</li>
+</ul>
+<p><strong>线程安全:</strong>
+一个应用能够并发执行多个线程但是不破坏共享数据或者产生竞争条件</p>
+<h3 id="2-">2.接口</h3>
+<p><a href="https://computing.llnl.gov/tutorials/pthreads/">pthread教程</a></p>

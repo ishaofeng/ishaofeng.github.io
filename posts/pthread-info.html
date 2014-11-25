@@ -8,7 +8,7 @@
     <meta name="description" content="小毛驴CodingWorld, 记录一个Coder的成长" />
     <meta name="baidu-site-verification" content="OqbZT1T9J5" />
     <title>
-做个安静的Coder--小毛驴
+pthread资料--小毛驴
 </title>
     <link rel="shortcut icon" href="/donkey.ico" />
     <link rel="bookmark" href="/donkey.ico"/>
@@ -111,22 +111,64 @@
     <div class="container">
              
 
-<h2>做个安静的Coder</h2>
-<hr />
-<h3>回归</h3>
-<p>终于回到西安了，在学校有了一点点学生的感觉，这两天在阅读Redis源代码,安安静静的学习学习,项目的事情已经不想再去想了，老板性情变化无常
-实在没有办法，也不去计较这么写东东.早一点毕业或许是最好的解决办法。性格多么直爽不见得是什么好事情，内敛才是处世的王道，尤其和性格变
-化无常的人，哎呀我还是安静的做个Coder,思考这么些处世的事情还是太累。</p>
-<h3>头发</h3>
-<p>昨天姐姐来家里说感觉我的头发越来越稀疏了，实在点在了我的痛楚，当时做SYSJ太耗体力和脑力，当初可能太傻了，到现在这个境地没有人关注你的
-过去的付出，老板或者甲方都看的是眼前的利益，就像我那永远也考不了的科目二。</p>
-<h3>学习</h3>
-<p>最近在阅读Redis源代码，一个成品的软件要去理解都是一个复杂的系统，就拿我阅读hdfs代码和redis代码的感受来说，感受这么一个系统的
-开发过程是一个很好的历练过程，单纯的让造个轮子或者一个座位非常简单，如果让造个飞机那就要命啦（ps: <strong>搬砖vs盖楼</strong>)，做这个对比是为了
-告诉自己现在选择的学习方式是对的，要好好阅读代码。<em>发现阅读代码类似于一个事务，如果决定做了就要下定决心坚持去看，如果三天打鱼两天
-晒网的，这些东西就不能连贯，不能像一个整体一样体现</em>。</p>
-<h3>总结</h3>
-<p>总结小世界，感受大世界。</p>
+<h2 id="pthread-">pthread资料</h2>
+<hr>
+<h3 id="1-">1.线程</h3>
+<p><strong>进程:</strong>
+进程是由操作系统创建,作为系统运行的实体,一个进程包含程序资源和程序执行的状态</p>
+<ul>
+<li>进程ID，进程组ID，用户ID，用户组ID</li>
+<li>环境</li>
+<li>工作目录</li>
+<li>程序指令</li>
+<li>寄存器</li>
+<li>栈</li>
+<li>堆</li>
+<li>文件描述符</li>
+<li>信号指令</li>
+<li>共享库</li>
+<li>进程间通讯工具(消息队列,管道,信号量,共享内存)</li>
+</ul>
+<p><strong>线程:</strong>
+线程存在于上述进程资源中, 能够被操作系统<strong>调度</strong>作为一个作为一个独立的实体，线程仅仅重复少数重要的资源使其能够执行。下述为一个线程所需要的</p>
+<ul>
+<li>栈指针</li>
+<li>寄存器</li>
+<li>调度属性(策略和优先级)</li>
+<li>信号</li>
+<li>线程私有数据</li>
+</ul>
+<p><strong>进程线程对比:</strong></p>
+<ul>
+<li>线程存在与进程之中，使用进程的资源</li>
+<li>线程能够获取CPU时间片,操作系统层级支持</li>
+<li>线程只重复独立调度所需要的资源</li>
+<li>线程的生命周期不大于进程</li>
+<li>因为大部分资源已经共享了进程的，所以线程是轻量级的</li>
+</ul>
+<p><strong>线程优势:</strong></p>
+<ul>
+<li>通过多线程在进行IO的时候能同时进行计算</li>
+<li>任务优先级可控制</li>
+<li>异步事件处理</li>
+</ul>
+<p><strong>pthread(POSIX thread)是为了统一不同硬件和操作系统线程实现的一个统一实现</strong></p>
+<p><strong>多线程编程模型:</strong></p>
+<ul>
+<li><strong>Manager/worker:</strong> 一个manger线程管理其它线程，处理所有的输入和分发任务到worker线程,1)静态工作线程池2)动态工作线程池.</li>
+<li><strong>Pipeline:</strong>一个任务分为多个子任务，这些任务并行执行</li>
+<li><strong>Peer:</strong>一个主线程创建线程以后和子线程同时开始工作,GUI程序通常使用主线程控制界面，其它线程完成后台任务。</li>
+</ul>
+<p><strong>内存共享模型:</strong></p>
+<ul>
+<li>每个线程有自己的栈还有线程私有数据</li>
+<li>所有线程共享堆</li>
+</ul>
+<p><strong>线程安全:</strong>
+一个应用能够并发执行多个线程但是不破坏共享数据或者产生竞争条件</p>
+<h3 id="2-">2.接口</h3>
+<p><a href="https://computing.llnl.gov/tutorials/pthreads/">pthread教程</a></p>
+
 <!-- Duoshuo Comment BEGIN -->
 	<div class="ds-thread"></div>
 <script type="text/javascript">
